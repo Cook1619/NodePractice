@@ -1,0 +1,9 @@
+NodJS Lifecycle
+
+You start your program via node app.js, this will start the node server
+After the script start it will then parse the code, register variables and functions
+Then all code is managed by the event loop
+This keeps on running as long as there are event listeners registered, such at the app.listen
+Only way for it to stop is to cntrol c on the terminal or somewhere in the code write process.exit();
+
+

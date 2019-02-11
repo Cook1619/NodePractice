@@ -1,37 +1,50 @@
 const http = require('http');
 const fs = require('fs');
 
+//This callback function returns a server, so we encapsulate that into a variable. With this variable we can now listen
 const server = http.createServer((req, res) => {
   const url = req.url;
   const method = req.method;
   if (url === '/') {
     res.write('<html>');
-    res.write('<head><title>Enter Message</title><head>');
+    res.write('<head><title>Enter Message/</title></head>');
     res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>');
     res.write('</html>');
+    //res.end, you can send anything else back in the reponse after this method call
     return res.end();
   }
-  if (url === '/message' && method === 'POST') {
+  if(url === "/message" && method === 'POST'){
+    //on() allows you to listen to certain events
     const body = [];
     req.on('data', (chunk) => {
-      console.log(chunk);
       body.push(chunk);
+      console.log(chunk);
     });
     req.on('end', () => {
+      //BUffer object is a global object, then concat the body, will creat a new buffer and add all the chunks together, toString, because we know its a string this will work
       const parsedBody = Buffer.concat(body).toString();
-      const message = parsedBody.split('=')[1];
+      //your data coming back we look like message="text typed in" because of your name attribute in your input element
+      //split will take everything to the the right of the = sign and take your input
+      const message =  parsedBody.split('=')[1];
+      //This fs.writeFuleSYnc is now brought into this function because its dependant on that data were getting from the input, if we ran this outside the function it wouldn't work
+      //the first argument is where you want the data to go,I'm creating a file called message.txt in this example
+      //The second argument is what you want to put in the destination of where the data in going
       fs.writeFileSync('message.txt', message);
-    });
-    res.statusCode = 302;
+    })
+    
+    res.statusCode =  302;
     res.setHeader('Location', '/');
     return res.end();
   }
+  // nodejs gives us the request and response object back because we created the server and had it listen to on port 3000
+  // console.log(req.url,req.method, req.headers);
   res.setHeader('Content-Type', 'text/html');
   res.write('<html>');
-  res.write('<head><title>My First Page</title><head>');
-  res.write('<body><h1>Hello from my Node.js Server!</h1></body>');
+  res.write('<head><title>My first page/</title></head>');
+  res.write("<body><h1>Hello from NodejS</h1></body>")
   res.write('</html>');
+  //res.end, you can send anything else back in the reponse after this method call
   res.end();
 });
-
+//This tells the server to listen to request on port 3000
 server.listen(3000);
