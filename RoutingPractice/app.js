@@ -18,9 +18,8 @@ const server = http.createServer((req, res) => {
     const body = [];
     req.on('data', (chunk) => {
       body.push(chunk);
-      console.log(chunk);
     });
-    req.on('end', () => {
+    return req.on('end', () => {
       //BUffer object is a global object, then concat the body, will creat a new buffer and add all the chunks together, toString, because we know its a string this will work
       const parsedBody = Buffer.concat(body).toString();
       //your data coming back we look like message="text typed in" because of your name attribute in your input element
@@ -29,12 +28,13 @@ const server = http.createServer((req, res) => {
       //This fs.writeFuleSYnc is now brought into this function because its dependant on that data were getting from the input, if we ran this outside the function it wouldn't work
       //the first argument is where you want the data to go,I'm creating a file called message.txt in this example
       //The second argument is what you want to put in the destination of where the data in going
-      fs.writeFileSync('message.txt', message);
+      //The third arguement is a callback to make it non-blocking, when you use writeFileSync your waiting on the create of the file
+      fs.writeFile('message.txt', message, (err) => {
+        res.statusCode =  302;
+        res.setHeader('Location', '/');
+        return res.end();
+      });
     })
-    
-    res.statusCode =  302;
-    res.setHeader('Location', '/');
-    return res.end();
   }
   // nodejs gives us the request and response object back because we created the server and had it listen to on port 3000
   // console.log(req.url,req.method, req.headers);
