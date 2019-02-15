@@ -8,7 +8,8 @@ const app =  express();
 
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.use(adminRoutes);
+//By putting /admin it allows you to not have to put in the admin.js file because all files start with the /admin path
+app.use('/admin',adminRoutes);
 
 app.use(shopRoutes);
 
