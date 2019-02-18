@@ -8,6 +8,8 @@ const shopRoutes =  require('./routes/shop');
 const app =  express();
 
 app.use(bodyParser.urlencoded({extended: false}));
+//This grants read permission to the public folder which will serve the css files
+app.use(express.static(path.join(__dirname, 'public')));
 
 //By putting /admin it allows you to not have to put in the admin.js file because all files start with the /admin path
 app.use('/admin',adminRoutes);
